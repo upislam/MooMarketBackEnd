@@ -17,12 +17,7 @@ const path=require('path');
 app.use(express.static(path.join(__dirname, 'public')));//set the static files dir of express app
 
 const homeRouter = require('./Routes/home');
-app.use('/home',homeRouter);
-
-// app.get('/',(req,res)=>{
-//     console.log('running........');
-//     res.render('index') 
-// })
+app.use('/',homeRouter);
 
 app.listen(3000,(req, res) => {
     console.log('running port........');
