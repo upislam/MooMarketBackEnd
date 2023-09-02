@@ -1,0 +1,155 @@
+CREATE TABLE District (
+    district_id serial PRIMARY KEY,
+    name varchar(200) NOT NULL
+);
+
+CREATE TABLE Thana (
+    thana_id serial PRIMARY KEY,
+    name varchar(200) NOT NULL,
+    district_id integer REFERENCES District(district_id)
+);
+
+CREATE TABLE Users (
+    user_id serial PRIMARY KEY,
+    name varchar(200) NOT NULL,
+    email varchar(200) NOT NULL,
+    phone_number integer UNIQUE NOT NULL,
+    password varchar(200) NOT NULL,
+    birth_date date NOT NULL,
+    created_at timestamp DEFAULT current_timestamp,
+    updated_at timestamp,
+    thana_id integer REFERENCES Thana(thana_id)
+);
+
+CREATE TABLE Users (
+    user_id serial PRIMARY KEY,
+    name varchar(200) NOT NULL,
+    email varchar(200) NOT NULL,
+    phone_number integer UNIQUE NOT NULL,
+    password varchar(200) NOT NULL,
+    birth_date date NOT NULL,
+    created_at timestamp DEFAULT current_timestamp,
+    updated_at timestamp,
+    verified boolean DEFAULT false,
+    thana_id integer REFERENCES Thana(thana_id)
+);
+
+CREATE TABLE Buyer (    
+    delivery_address varchar(2000) NOT NULL,
+    nid integer UNIQUE,
+    user_id integer REFERENCES Users(user_id) PRIMARY KEY
+);
+
+CREATE TABLE Seller (    
+    present_address varchar(2000) NOT NULL,
+    permanent_address varchar(2000) NOT NULL,
+    nid integer UNIQUE NOT NULL,
+    trade_license_no integer UNIQUE NOT NULL,
+    company_name varchar(200),
+    short_description varchar(2000),
+    user_id integer REFERENCES Users(user_id) PRIMARY KEY
+);
+
+CREATE TABLE Admin (    
+    user_id integer REFERENCES Users(user_id) PRIMARY KEY
+);
+
+CREATE TABLE Advertisements (
+    advertise_id serial PRIMARY KEY,
+    description varchar(2000) NOT NULL,
+    status varchar(200) NOT NULL,
+    type varchar(200) NOT NULL,
+    verified boolean DEFAULT true,
+    quantity integer NOT NULL,
+    created_at timestamp DEFAULT current_timestamp,
+    seller_id integer REFERENCES Seller(user_id)
+);
+
+CREATE TABLE Meat_Advertisement (
+    type varchar(200) NOT NULL,
+    price_per_kg integer NOT NULL,
+    date_of_storage date NOT NULL,
+    date_of_expiry date NOT NULL,
+    picture_url varchar(200) NOT NULL,
+    advertise_id integer REFERENCES Advertisements(advertise_id) PRIMARY KEY
+);
+
+CREATE TABLE Cattle_Advertisement(
+    price integer NOT NULL,
+    farm_name varchar(200) NOT NULL,
+    is_bid boolean NOT NULL,
+    advertise_id integer REFERENCES Advertisements(advertise_id) PRIMARY KEY
+);
+
+CREATE TABLE Cattle(
+    cattle_id serial PRIMARY KEY,
+    age integer NOT NULL,
+    color varchar(255) NOT NULL,
+    weight integer NOT NULL,
+    gender varchar(255) NOT NULL,
+    veterinary_verified boolean NOT NULL,
+    picture_front_view_url varchar(200) NOT NULL,
+    picture_left_view_url varchar(200) NOT NULL,
+    picture_right_view_url varchar(200) NOT NULL,
+    picture_back_view_url varchar(200) NOT NULL,
+    video_url varchar(200) NOT NULL,
+    cattle_advertise_id integer REFERENCES Cattle_Advertisement(advertise_id)
+);
+
+CREATE TABLE Rawhide_Advertisement(
+    preservation_style varchar(200) NOT NULL,
+    selling_price_per_piece integer NOT NULL,
+    date_of_storage date NOT NULL,
+    date_of_expiry date NOT NULL,
+    picture_url varchar(200) NOT NULL,
+    advertise_id integer REFERENCES Advertisements(advertise_id) PRIMARY KEY
+);
+
+CREATE TABLE Horn_Advertisement(
+    selling_price_per_piece integer NOT NULL,
+    date_of_storage date NOT NULL,
+    date_of_expiry date NOT NULL,
+    picture_url varchar(200) NOT NULL,
+    advertise_id integer REFERENCES Advertisements(advertise_id) PRIMARY KEY
+);
+
+CREATE TABLE Hoof_Advertisement(
+    selling_price_per_piece integer NOT NULL,
+    date_of_storage date NOT NULL,
+    date_of_expiry date NOT NULL,
+    picture_url varchar(200) NOT NULL,
+    advertise_id integer REFERENCES Advertisements(advertise_id) PRIMARY KEY
+);
+
+CREATE TABLE Rating (
+    rating integer NOT NULL,
+    buyer_id integer REFERENCES Buyer(user_id),
+    advertise_id integer REFERENCES Advertisements(advertise_id),
+    PRIMARY KEY (buyer_id, advertise_id)
+);
+
+CREATE TABLE Advertisement_Delete_History (
+    deleted_at timestamp DEFAULT current_timestamp,
+    reason varchar(2000) NOT NULL,
+    advertise_id integer REFERENCES Advertisements(advertise_id) PRIMARY KEY,
+    admin_id integer REFERENCES Admin(user_id)
+);
+
+CREATE OR REPLACE FUNCTION get_thana_id(t_name varchar) RETURNS
+integer AS $$
+DECLARE
+t_id integer;
+BEGIN
+SELECT thana_id INTO t_id
+FROM Thana
+WHERE name = t_name;
+RETURN t_id;
+END;
+$$ LANGUAGE plpgsql;
+
+//inserts:
+
+INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id) VALUES ('nafi','nafiislam@gmail.com',017,'dtttrt','2023-09-02',NULL,get_thana_id('Barura'));
+INSERT INTO Buyer(delivery_address,nid,user_id) VALUES ('sdfsdf',NULL,(select max(user_id) from Users));
+INSERT INTO Seller(present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id) VALUES ('sadas','asas',456,546,'ggwp','hehe',(select max(user_id) from Users));
+INSERT INTO Admin(user_id) VALUES (select max(user_id) from Users);
