@@ -19,6 +19,13 @@ router.get('/districts', async(req, res) => {
     res.send(r.rows);
 })
 
+router.get('/phoneNumbers', async(req, res) => {
+    const client = await pool.connect();
+    const r = await client.query('SELECT phone_number FROM Users');
+    client.release(true);
+    res.send(r.rows);
+})
+
 router.post('/thanas', async(req, res) => {
     var {district} = req.body;
     const client = await pool.connect();

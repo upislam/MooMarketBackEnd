@@ -25,7 +25,7 @@ CREATE TABLE Users (
     user_id serial PRIMARY KEY,
     name varchar(200) NOT NULL,
     email varchar(200) NOT NULL,
-    phone_number integer UNIQUE NOT NULL,
+    phone_number bigint UNIQUE NOT NULL,
     password varchar(200) NOT NULL,
     birth_date date NOT NULL,
     created_at timestamp DEFAULT current_timestamp,

@@ -22,7 +22,22 @@ fetch('/register/districts', {
     console.log(err.Error);
 });
 
-
+var phoneNumbers
+fetch('/register/phoneNumbers', {
+    method: 'GET'
+})
+.then(res => {
+    if (!res.ok) {
+      throw new Error('Network response status was vejal');
+    }
+    return res.json();
+})
+.then(data => {
+    phoneNumbers = data;
+})
+.catch(err => {
+    console.log(err.Error);
+});
 
 function districtHandler(){
     var parent = document.getElementById('district');
@@ -81,4 +96,26 @@ function passwordHandler(){
         document.getElementById('submit').disabled = false;
         document.getElementById('prompt').innerHTML = "";
     }
+}
+
+function phoneNumberHandler(){
+    const phoneNumber = document.getElementById('phone_number');
+    if(phoneNumber.value.length != 11){
+        document.getElementById('submit').disabled = true;
+        document.getElementById('prompt2').innerHTML = "Phone number must be 11 digits long";
+        return;
+    }
+    else{
+        document.getElementById('submit').disabled = false;
+        document.getElementById('prompt2').innerHTML =""
+    }
+    for(let i = 0; i < phoneNumbers.length; i++){
+        if(phoneNumber.value == phoneNumbers[i].phone_number){
+            document.getElementById('submit').disabled = true;
+            document.getElementById('prompt2').innerHTML = "Phone number already exists";
+            return;
+        }
+    }
+    document.getElementById('submit').disabled = false;
+    document.getElementById('prompt2').innerHTML = "";
 }
