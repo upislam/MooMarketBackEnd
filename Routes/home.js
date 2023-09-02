@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -7,7 +6,7 @@ router.get('/', async(req, res) => {
     const client = await pool.connect();
     const r = await client.query('SELECT * FROM Users');
     client.release(true);
-    res.render('home',{rows:r.rows}) 
+    res.render('home',{session:req.session.phone_number}) 
 })
 
 module.exports = router;

@@ -16,9 +16,26 @@ app.use(express.json());//similar to bodyParser.json().
 const path=require('path');
 app.use(express.static(path.join(__dirname, 'public')));//set the static files dir of express app
 
+const session = require('express-session');
+app.use(session({
+    secret:'secret',
+    resave: false,
+    saveUninitialized: true,
+    rolling: true
+}));
+
 const homeRouter = require('./Routes/home');
 app.use('/',homeRouter);
 
-app.listen(3000,(req, res) => {
+const loginRouter = require('./Routes/login');
+app.use('/login',loginRouter);
+
+const registerRouter = require('./Routes/register');
+app.use('/register',registerRouter);
+
+const logoutRouter = require('./Routes/logout');
+app.use('/logout',logoutRouter);
+
+app.listen(3001,(req, res) => {
     console.log('running port........');
 });

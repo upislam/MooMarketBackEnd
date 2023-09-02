@@ -45,8 +45,8 @@ CREATE TABLE Seller (
     permanent_address varchar(2000) NOT NULL,
     nid integer UNIQUE NOT NULL,
     trade_license_no integer UNIQUE NOT NULL,
-    company_name varchar(200),
-    short_description varchar(2000),
+    company_name varchar(200) NOT NULL,
+    short_description varchar(2000) NOT NULL,
     user_id integer REFERENCES Users(user_id) PRIMARY KEY
 );
 
