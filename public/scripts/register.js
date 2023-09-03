@@ -82,11 +82,10 @@ function passwordHandler(){
     const confirmPassword = document.getElementById('confirmPassword');
     if(password.value.length < 8){
         document.getElementById('submit').disabled = true;
-        document.getElementById('prompt').innerHTML = "Password must be at least 8 characters long";
-        return;
+        document.getElementById('prompt3').innerHTML = "Password must be at least 8 characters long";
     }
     else{
-        document.getElementById('prompt').innerHTML =""
+        document.getElementById('prompt3').innerHTML =""
     }
     if(password.value != confirmPassword.value){
         document.getElementById('submit').disabled = true;

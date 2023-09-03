@@ -24,6 +24,10 @@ app.use(session({
     rolling: true
 }));
 
+const nodemailer=require('nodemailer');
+const multer=require("multer");
+const jwt = require('jsonwebtoken');
+
 const homeRouter = require('./Routes/home');
 app.use('/',homeRouter);
 
@@ -36,6 +40,6 @@ app.use('/register',registerRouter);
 const logoutRouter = require('./Routes/logout');
 app.use('/logout',logoutRouter);
 
-app.listen(3001,(req, res) => {
+app.listen(3000,(req, res) => {
     console.log('running port........');
 });
