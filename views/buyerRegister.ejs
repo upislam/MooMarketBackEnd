@@ -38,6 +38,13 @@
             </div>
             <label for="prompt2" class="form-label" id="prompt2" style="color: red;"></label>
             <div class="col-auto">
+              <button id="otp_button" class="btn btn-primary mb-3" onclick="otpHandler()" disabled>Send OTP</button>
+            </div>
+            <div class="col-auto">
+              <label for="otp" class="form-label">OTP</label>
+              <input type="number" class="form-control" id="otp" name="otp" placeholder="OTP" required>
+            </div>
+            <div class="col-auto">
               <label for="Birth date" class="form-label">Birth date</label>
               <input type="date" class="form-control" id="birth_date" name="birth_date" placeholder="Birth date" required>
             </div>

@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 const nodemailer=require('nodemailer');
 
 const { pool } = require("../db");
+
+const otpMap = new Map();
+
 router.get('/', async(req, res) => {
     res.render('buyerRegister') 
 })
@@ -37,8 +40,19 @@ router.post('/thanas', async(req, res) => {
     res.send(r.rows);
 })
 
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+
 router.post('/buyersubmit', async(req, res) => {
-    var {name, email, password, phone_number, birth_date, thana, delivery_address,nid} = req.body;
+    var {name, email, password, phone_number, birth_date, thana, delivery_address,nid,otp} = req.body;
+
+    if(otpMap.get(phone_number) != otp){
+        res.render('output',{msg:'OTP mismatch'})
+        return;
+    }
+
     const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
     password = await bcrypt.hash(password, salt);
     var transporter = nodemailer.createTransport({
@@ -58,7 +72,7 @@ router.post('/buyersubmit', async(req, res) => {
     const emailToken = await jwt.sign({phone_number:phone_number,},process.env.JWT_SECRET,{expiresIn:'1h',})
     
     //console.log(emailToken)
-    const url =`http://localhost:3000/register/verify/${emailToken}`;
+    const url =`${process.env.DOMAIN}/register/verify/${emailToken}`;
     transporter.sendMail({
         to: email,
         subject:'Confirm Email',
@@ -110,7 +124,7 @@ router.post('/buyersubmit', async(req, res) => {
             </head>
             <body>
             <div class="row">
-            <img src="http://drive.google.com/uc?export=view&id=11d1JZCNOu-B69BjTYC1MjwEIhDJr5bUm" class="img-thumbnail mx-auto my-auto" style="width:800px;height:600px;align-items:center">
+            <img src="http://drive.google.com/uc?export=view&id=16RT4EO9qkT0osWvcK3k3ZQJLLBO5UbAW" class="img-thumbnail mx-auto my-auto" style="width:800px;height:600px;align-items:center">
             </div>
             <div class="row">
                 <a href="${url}"><button class="button-24" role="button" style=" margin-left:400px; padding:10px;">Click to verify email</button></a>
@@ -123,10 +137,8 @@ router.post('/buyersubmit', async(req, res) => {
             ></script>
         </body>
         </html>`,
-    }); 
-    console.log('email sent')
+    });
 
-    console.log('after email sent')
     const client = await pool.connect();
     await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6))', [name, email, phone_number, password, birth_date, thana]);
     if(nid)
@@ -140,12 +152,8 @@ router.post('/buyersubmit', async(req, res) => {
 router.post('/sellersubmit', async(req, res) => {
     var {name, email, password, phone_number, birth_date, thana,nid,trade_license_no,company_name,present_address,permanent_address,short_description} = req.body;
     
-    await bcrypt.genSalt(process.env.SALT, function(err, salt) {
-        bcrypt.hash(password, salt, function(err, hash) {
-            password = hash;
-        });
-    });
-
+    const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
+    password = await bcrypt.hash(password, salt);
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
@@ -160,83 +168,75 @@ router.post('/sellersubmit', async(req, res) => {
       }
     });
 
-    await jwt.sign({
-        phone_number:phone_number,
-    },
-    process.env.JWT_SECRET,
-    {
-        expiresIn:'1h',
-    },
-    (err,emailToken)=>{
-        //console.log(emailToken)
-        const url =`http://localhost:3000/register/verify/${emailToken}`;
-        transporter.sendMail({
-            to: email,
-            subject:'Confirm Email',
-            html: `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Confirm email</title>
-                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-                <style>
-                    .button-24 {
-                        background: #FF4742;
-                        border: 1px solid #FF4742;
-                        border-radius: 6px;
-                        box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
-                        box-sizing: border-box;
-                        color: #FFFFFF;
-                        cursor: pointer;
-                        display: inline-block;
-                        font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
-                        font-size: 16px;
-                        font-weight: 800;
-                        line-height: 16px;
-                        min-height: 40px;
-                        outline: 0;
-                        padding: 12px 14px;
-                        text-align: center;
-                        text-rendering: geometricprecision;
-                        text-transform: none;
-                        user-select: none;
-                        -webkit-user-select: none;
-                        touch-action: manipulation;
-                        vertical-align: middle;
-                      }
-                      
-                      .button-24:hover,
-                      .button-24:active {
-                        background-color: initial;
-                        background-position: 0 0;
-                        color: #FF4742;
-                      }
-                      
-                      .button-24:active {
-                        opacity: .5;
-                      }
-                    </style>    
-                </head>
-                <body>
-                <div class="row">
-                <img src="http://drive.google.com/uc?export=view&id=11d1JZCNOu-B69BjTYC1MjwEIhDJr5bUm" class="img-thumbnail mx-auto my-auto" style="width:800px;height:600px;align-items:center">
-                </div>
-                <div class="row">
-                    <a href="${url}"><button class="button-24" role="button" style=" margin-left:400px; padding:10px;">Click to verify email</button></a>
-                    <p style="margin: auto;padding: 10px; font-size: 20px;">Please click this to verify your email: <a href="${url}">${url}</a></p>
-                </div>
-                <script
-                src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-                crossorigin="anonymous"
-                ></script>
-            </body>
-            </html>`,
-        }); 
-    },
-    );
+    const emailToken = await jwt.sign({phone_number:phone_number,},process.env.JWT_SECRET,{expiresIn:'1h',})
+    
+    //console.log(emailToken)
+    const url =`${process.env.DOMAIN}/register/verify/${emailToken}`;
+    transporter.sendMail({
+        to: email,
+        subject:'Confirm Email',
+        html: `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Confirm email</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+            <style>
+                .button-24 {
+                    background: #FF4742;
+                    border: 1px solid #FF4742;
+                    border-radius: 6px;
+                    box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+                    box-sizing: border-box;
+                    color: #FFFFFF;
+                    cursor: pointer;
+                    display: inline-block;
+                    font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
+                    font-size: 16px;
+                    font-weight: 800;
+                    line-height: 16px;
+                    min-height: 40px;
+                    outline: 0;
+                    padding: 12px 14px;
+                    text-align: center;
+                    text-rendering: geometricprecision;
+                    text-transform: none;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    touch-action: manipulation;
+                    vertical-align: middle;
+                    }
+                    
+                    .button-24:hover,
+                    .button-24:active {
+                    background-color: initial;
+                    background-position: 0 0;
+                    color: #FF4742;
+                    }
+                    
+                    .button-24:active {
+                    opacity: .5;
+                    }
+                </style>    
+            </head>
+            <body>
+            <div class="row">
+            <img src="http://drive.google.com/uc?export=view&id=16RT4EO9qkT0osWvcK3k3ZQJLLBO5UbAW" class="img-thumbnail mx-auto my-auto" style="width:800px;height:600px;align-items:center">
+            </div>
+            <div class="row">
+                <a href="${url}"><button class="button-24" role="button" style=" margin-left:400px; padding:10px;">Click to verify email</button></a>
+                <p style="margin: auto;padding: 10px; font-size: 20px;">Please click this to verify your email: <a href="${url}">${url}</a></p>
+            </div>
+            <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+            ></script>
+        </body>
+        </html>`,
+    }); 
 
     const client = await pool.connect();
     await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6))', [name, email, phone_number, password, birth_date, thana]);
@@ -245,12 +245,31 @@ router.post('/sellersubmit', async(req, res) => {
     res.render('output',{msg:'Seller Registration successful'}) 
 })
 
-router.get('/verify/:token',(req,res)=> {
+router.get('/verify/:token',async(req,res)=> {
     const{phone_number}=jwt.verify(req.params.token,process.env.JWT_SECRET);
-    const client = pool.connect();
-    client.query('UPDATE Users SET verified=true WHERE phone_number=$1',[phone_number]);
+    const client = await pool.connect();
+    await client.query('UPDATE Users SET verified=true WHERE phone_number=$1',[phone_number]);
     client.release(true);
     res.render('output',{msg:'Email verified successfully'})
+})
+
+router.post('/otp',async(req,res)=> {
+    const{phone_number}=req.body;
+    var otp_pin = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
+
+    otpMap.set(phone_number,otp_pin);
+    console.log(process.env.TWILIO_ACCOUNT_SID)
+    const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
+    const authToken = 'fc8f459529d9284605566d3efc720d7c';
+    const twilioClient = require('twilio')(accountSid, authToken);
+
+    twilioClient.messages
+    .create({
+        body: `Your otp is ${otp_pin}`,
+        from: '+18134384603',
+        to: `+88${phone_number}`
+    })
+    .then(message => console.log("otp sent sucess"))
 })
 
 module.exports = router;

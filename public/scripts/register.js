@@ -101,20 +101,42 @@ function phoneNumberHandler(){
     const phoneNumber = document.getElementById('phone_number');
     if(phoneNumber.value.length != 11){
         document.getElementById('submit').disabled = true;
+        document.getElementById('otp_button').disabled = true;
         document.getElementById('prompt2').innerHTML = "Phone number must be 11 digits long";
         return;
     }
     else{
         document.getElementById('submit').disabled = false;
+        document.getElementById('otp_button').disabled = false;
         document.getElementById('prompt2').innerHTML =""
     }
     for(let i = 0; i < phoneNumbers.length; i++){
         if(phoneNumber.value == phoneNumbers[i].phone_number){
             document.getElementById('submit').disabled = true;
+            document.getElementById('otp_button').disabled = true;
             document.getElementById('prompt2').innerHTML = "Phone number already exists";
             return;
         }
     }
     document.getElementById('submit').disabled = false;
+    document.getElementById('otp_button').disabled = false;
     document.getElementById('prompt2').innerHTML = "";
+}
+
+function otpHandler(){
+    fetch('/register/otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            phone_number:document.getElementById('phone_number').value
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+          throw new Error('Network response status was vejal');
+        }
+        return res.json();
+    })
 }
