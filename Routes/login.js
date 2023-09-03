@@ -133,6 +133,10 @@ router.post('/forgetPassword', async(req, res) => {
             ></script>
         </body>
         </html>`,
+    }).catch(err =>{
+        console.log(err)
+        res.render('output',{msg:`Email was wrong`})
+        return
     }); 
     res.render('output',{msg:`Check email`})
 })

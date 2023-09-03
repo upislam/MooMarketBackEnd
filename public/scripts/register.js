@@ -111,7 +111,7 @@ function phoneNumberHandler(){
         document.getElementById('prompt2').innerHTML =""
     }
     for(let i = 0; i < phoneNumbers.length; i++){
-        if(phoneNumber.value == phoneNumbers[i].phone_number){
+        if(parseInt(phoneNumber.value) == phoneNumbers[i].phone_number){
             document.getElementById('submit').disabled = true;
             document.getElementById('otp_button').disabled = true;
             document.getElementById('prompt2').innerHTML = "Phone number already exists";

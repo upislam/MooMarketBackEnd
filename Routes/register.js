@@ -137,7 +137,11 @@ router.post('/buyersubmit', async(req, res) => {
             ></script>
         </body>
         </html>`,
-    });
+    }).catch(err =>{
+        console.log(err)
+        res.render('output',{msg:`Email was wrong`})
+        return
+    }); 
 
     const client = await pool.connect();
     await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6))', [name, email, phone_number, password, birth_date, thana]);
@@ -236,6 +240,10 @@ router.post('/sellersubmit', async(req, res) => {
             ></script>
         </body>
         </html>`,
+    }).catch(err =>{
+        console.log(err)
+        res.render('output',{msg:`Email was wrong`})
+        return
     }); 
 
     const client = await pool.connect();
@@ -258,11 +266,12 @@ router.post('/otp',async(req,res)=> {
     var otp_pin = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
 
     otpMap.set(phone_number,otp_pin);
-    console.log(process.env.TWILIO_ACCOUNT_SID)
+
     const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
     const authToken = 'fc8f459529d9284605566d3efc720d7c';
     const twilioClient = require('twilio')(accountSid, authToken);
 
+    
     twilioClient.messages
     .create({
         body: `Your otp is ${otp_pin}`,
@@ -270,6 +279,10 @@ router.post('/otp',async(req,res)=> {
         to: `+88${phone_number}`
     })
     .then(message => console.log("otp sent sucess"))
+    .catch(err => {
+        console.error("Error sending OTP:");
+    });
+    
 })
 
 module.exports = router;
