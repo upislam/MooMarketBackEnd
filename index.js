@@ -40,6 +40,9 @@ app.use('/register',registerRouter);
 const logoutRouter = require('./Routes/logout');
 app.use('/logout',logoutRouter);
 
+const giveAdvertismentRouter = require('./Routes/giveAdvertisement');
+app.use('/seller/giveAdvertisement',giveAdvertismentRouter);
+
 app.listen(3000,(req, res) => {
     console.log('running port........');
 });

@@ -33,6 +33,9 @@
         <a href="/login" class="button"><button class="btn btn-primary">Login</button></a>
         <a href="/register" class="button"><button class="btn btn-primary">Register</button></a>
       <% }else{ %>
+        <% if(locals.type=="seller"){ %>
+          <a href="/giveAdvertisement" class="button"><button class="btn btn-primary">Give Advertisement</button></a>
+        <% }%>
         <a href="/logout" class="button"><button class="btn btn-primary">Logout</button></a>
       <% }%>
     </div>

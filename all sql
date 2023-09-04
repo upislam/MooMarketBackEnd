@@ -31,7 +31,8 @@ CREATE TABLE Users (
     created_at timestamp DEFAULT current_timestamp,
     updated_at timestamp,
     verified boolean DEFAULT false,
-    thana_id integer REFERENCES Thana(thana_id)
+    thana_id integer REFERENCES Thana(thana_id),
+    type varchar(200) NOT NULL
 );
 
 CREATE TABLE Buyer (    
