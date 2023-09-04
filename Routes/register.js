@@ -290,7 +290,7 @@ router.post('/otp',async(req,res)=> {
     const{phone_number}=req.body;
     var otp_pin = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
 
-    const otp_pin_token = await jwt.sign({otp_pin:otp_pin},process.env.JWT_SECRET,{expiresIn:'120',})
+    const otp_pin_token = await jwt.sign({ otp_pin: otp_pin }, process.env.JWT_SECRET, { expiresIn: '300s' });
 
     otpMap.set(phone_number,otp_pin_token);
 
