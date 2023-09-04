@@ -274,7 +274,7 @@ router.post('/sellersubmit', async(req, res) => {
 
 router.get('/verify/:token',async(req,res)=> {
     try{
-        const{phone_number}= await jwt.verify(req.params.token,process.env.JWT_SECRET);
+        const{phone_number}= jwt.verify(req.params.token,process.env.JWT_SECRET);
         const client = await pool.connect();
         await client.query('UPDATE Users SET verified=true WHERE phone_number=$1',[phone_number]);
         client.release(true);
