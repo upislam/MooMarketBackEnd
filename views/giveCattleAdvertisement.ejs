@@ -12,10 +12,85 @@
 
     <div class="container">
         <form class="col g-3" action="/seller/giveAdvertisement/cattle" method="post" enctype="multipart/form-data">
-            
+          <div class="col-auto">
+            <label for="Quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" value="1" oninput="quantityHandler()" required>
+          </div>
+          <label for="Quantity" class="form-label" id="quantity_error" style="color: red;"></label>
+          <div class="col-auto">
+            <label for="Price" class="form-label">Total price</label>
+            <input type="number" class="form-control" id="price" name="price" placeholder="Price" oninput="priceHandler()" required>
+          </div>
+          <label for="Quantity" class="form-label" id="price_error" style="color: red;"></label>
+          <div class="col-auto">
+            <label for="Farm name" class="form-label">Farm name</label>
+            <input type="text" class="form-control" id="farm_name" name="farm_name" placeholder="Farm name" required>
+          </div>
+          <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="2" placeholder="Description" required></textarea>
+          </div>
+          <div class="col-auto">
+            <label for="Type" class="form-label">Bidding?</label>
+            <select id="bidding" name="bidding" class="form-select" aria-label=".form-select"  required>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+          <div id="parent">
+            <h2 style="text-align:center">Cattle 1</h2>
             <div class="col-auto">
-                <button id="submit" type="submit" class="btn btn-primary mb-3" disabled>Submit</button>
+              <label for="age" class="form-label">Age</label>
+              <input type="number" class="form-control" id="age0" name="age0" placeholder="Age" oninput="ageHandler(0)" required>
             </div>
+            <label for="Quantity" class="form-label" id="age_error0" style="color: red;"></label>
+            <div class="col-auto">
+              <label for="Color" class="form-label">Color</label>
+              <input type="text" class="form-control" id="color" name="color0" placeholder="Color" required>
+            </div>
+            <div class="col-auto">
+              <label for="weight" class="form-label">Weight</label>
+              <input type="number" class="form-control" id="weight0" name="weight0" placeholder="Weight" oninput="weightHandler(0)" required>
+            </div>
+            <label for="Quantity" class="form-label" id="weight_error0" style="color: red;"></label>
+            <div class="col-auto">
+              <label for="Type" class="form-label">Gender</label>
+              <select id="gender" name="gender0" class="form-select" aria-label=".form-select"  required>
+                  <option value="male">male</option>
+                  <option value="female">female</option>
+              </select>
+          </div>
+          <div class="col-auto">
+            <label for="Type" class="form-label">Veterinary verified?</label>
+            <select id="veterinary_verified0" name="veterinary_verified0" class="form-select" aria-label=".form-select"  required>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+          </div>
+            <div class="col-auto">
+              <label for="Picture" class="form-label">Picture front view</label>
+              <input type="file" class="form-control" id="picture_front_view" name="picture_front_view" oninput="pictureFrontHandler(0)" required>
+            </div>
+            <div class="col-auto">
+              <label for="Picture" class="form-label">Picture left view</label>
+              <input type="file" class="form-control" id="picture_left_view" name="picture_left_view" oninput="pictureLeftHandler(0)" required>
+            </div>
+            <div class="col-auto">
+              <label for="Picture" class="form-label">Picture right view</label>
+              <input type="file" class="form-control" id="picture_right_view" name="picture_right_view" oninput="pictureRightHandler(0)" required>
+            </div>
+            <div class="col-auto">
+              <label for="Picture" class="form-label">Picture back view</label>
+              <input type="file" class="form-control" id="picture_back_view" name="picture_back_view" oninput="pictureBackHandler(0)" required>
+            </div>
+            <div class="col-auto">
+              <label for="video" class="form-label">Video</label>
+              <input type="file" class="form-control" id="video" name="video" oninput="videoHandler(0)" required>
+            </div>
+          </div>
+          <div class="col-auto">
+              <button id="submit" type="submit" class="btn btn-primary mb-3" disabled>Submit</button>
+          </div>
         </form>
     </div>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
