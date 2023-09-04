@@ -146,7 +146,13 @@ function getRndInteger(min, max) {
 }
 
 router.get('/forgetPassword/verify/:token',async(req,res)=> {
-    const{phone_number}=jwt.verify(req.params.token,process.env.JWT_SECRET);
+    try{
+        const{phone_number}=jwt.verify(req.params.token,process.env.JWT_SECRET);
+    }
+    catch(e){
+        res.render('output',{msg:`Token is invalid`})
+        return
+    }
 
     var newPassword = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
     const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));

@@ -1,25 +1,37 @@
-const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
-const authToken = 'fc8f459529d9284605566d3efc720d7c';
-const client = require('twilio')(accountSid, authToken);
+// const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
+// const authToken = 'fc8f459529d9284605566d3efc720d7c';
+// const client = require('twilio')(accountSid, authToken);
 
-client.messages
-    .create({
-        body: 'Your otp is 456789',
-        from: '+18134384603',
-        to: '+8801704953445'
-    })
-    .then(message => console.log(message.sid))
+// client.messages
+//     .create({
+//         body: 'Your otp is 456789',
+//         from: '+18134384603',
+//         to: '+8801704953445'
+//     })
+//     .then(message => console.log(message.sid))
 
-function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
-  }
-ggwp = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
-console.log(ggwp)
+// function getRndInteger(min, max) {
+//     return Math.floor(Math.random() * (max - min) ) + min;
+//   }
+// ggwp = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
+// console.log(ggwp)
 
 
-// const jwt = require('jsonwebtoken');
-// const nodemailer=require('nodemailer');
+const jwt = require('jsonwebtoken');
+const nodemailer=require('nodemailer');
 
+async function g(){
+    const emailToken = await jwt.sign({phone_number:44},'sfbshfjngkjnfbjesfkj56154jnfjndsf54454364kjfksnjdf',{expiresIn:'0h',})
+    
+    try{
+        const gg = jwt.verify(emailToken,'sfbshfjngkjnfbjesfkj56154jnfjndsf54454364kjfksnjdf')
+    }
+    catch(e){
+        console.log('tt')
+    }
+}
+
+g()
 // var transporter = nodemailer.createTransport({
 //     service: 'gmail',
 //     host: 'smtp.gmail.com',

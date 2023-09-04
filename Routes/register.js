@@ -48,9 +48,15 @@ function getRndInteger(min, max) {
 router.post('/buyersubmit', async(req, res) => {
     var {name, email, password, phone_number, birth_date, thana, delivery_address,nid,otp} = req.body;
 
-    if(otpMap.get(phone_number) != otp){
-        res.render('output',{msg:'OTP mismatch'})
-        return;
+    try{
+        const {otp_pin} = jwt.verify(otpMap.get(phone_number),process.env.JWT_SECRET)
+        if(otp_pin != otp){
+            res.render('output',{msg:'OTP mismatch'})
+            return;
+        }
+    }
+    catch(e){
+        res.render('output',{msg:'OTP has timed out'})
     }
 
     const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
@@ -154,7 +160,18 @@ router.post('/buyersubmit', async(req, res) => {
 })
 
 router.post('/sellersubmit', async(req, res) => {
-    var {name, email, password, phone_number, birth_date, thana,nid,trade_license_no,company_name,present_address,permanent_address,short_description} = req.body;
+    var {name, email, password, phone_number, birth_date, thana,nid,trade_license_no,company_name,present_address,permanent_address,short_description,otp} = req.body;
+    
+    try{
+        const {otp_pin} = jwt.verify(otpMap.get(phone_number),process.env.JWT_SECRET)
+        if(otp_pin != otp){
+            res.render('output',{msg:'OTP mismatch'})
+            return;
+        }
+    }
+    catch(e){
+        res.render('output',{msg:'OTP has timed out'})
+    }
     
     const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
     password = await bcrypt.hash(password, salt);
@@ -254,7 +271,13 @@ router.post('/sellersubmit', async(req, res) => {
 })
 
 router.get('/verify/:token',async(req,res)=> {
-    const{phone_number}=jwt.verify(req.params.token,process.env.JWT_SECRET);
+    try{
+        const{phone_number}=jwt.verify(req.params.token,process.env.JWT_SECRET);
+    }
+    catch(e){
+        res.render('output',{msg:'Token is invalid'})
+        return
+    }
     const client = await pool.connect();
     await client.query('UPDATE Users SET verified=true WHERE phone_number=$1',[phone_number]);
     client.release(true);
@@ -265,7 +288,9 @@ router.post('/otp',async(req,res)=> {
     const{phone_number}=req.body;
     var otp_pin = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
 
-    otpMap.set(phone_number,otp_pin);
+    const otp_pin_token = await jwt.sign({otp_pin:otp_pin},process.env.JWT_SECRET,{expiresIn:'120',})
+
+    otpMap.set(phone_number,otp_pin_token);
 
     const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
     const authToken = 'fc8f459529d9284605566d3efc720d7c';
