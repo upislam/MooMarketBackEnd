@@ -148,20 +148,19 @@ function getRndInteger(min, max) {
 router.get('/forgetPassword/verify/:token',async(req,res)=> {
     try{
         const{phone_number}=jwt.verify(req.params.token,process.env.JWT_SECRET);
+        var newPassword = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
+        const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
+        var newPasswordHash = await bcrypt.hash(newPassword, salt);
+
+        const client = await pool.connect();
+        await client.query('UPDATE Users SET password=$1 WHERE phone_number=$2',[newPasswordHash,phone_number]);
+        client.release(true);
+        res.render('output',{msg:`New password: ${newPassword}`})
     }
     catch(e){
         res.render('output',{msg:`Token is invalid`})
         return
     }
-
-    var newPassword = (getRndInteger(0,8)+1).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString() +(getRndInteger(0,9)).toString()
-    const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
-    var newPasswordHash = await bcrypt.hash(newPassword, salt);
-
-    const client = await pool.connect();
-    await client.query('UPDATE Users SET password=$1 WHERE phone_number=$2',[newPasswordHash,phone_number]);
-    client.release(true);
-    res.render('output',{msg:`New password: ${newPassword}`})
 })
 
 module.exports = router;
