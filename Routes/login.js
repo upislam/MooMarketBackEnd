@@ -26,7 +26,11 @@ router.post('/', async(req, res) => {
             var verified = await client.query('select verified from Users WHERE phone_number=$1',[phone_number]);
             client.release(true);
             if(verified.rows[0].verified == true){
+                const client = await pool.connect();
+                var type = await client.query('select type from Users WHERE phone_number=$1',[phone_number]);
+                client.release(true);
                 req.session.phone_number = phone_number;
+                req.session.type = type.rows[0].type;
                 res.render('output',{msg:"Login successful"})
             }
             else{

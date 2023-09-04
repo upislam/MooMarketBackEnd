@@ -148,9 +148,24 @@ RETURN t_id;
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_user_id(p_number bigint) RETURNS
+integer AS $$
+DECLARE
+u_id integer;
+BEGIN
+SELECT user_id INTO u_id
+FROM Users
+WHERE phone_number = p_number;
+RETURN u_id;
+END;
+$$ LANGUAGE plpgsql;
+
 //inserts:
 
 INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id) VALUES ('nafi','nafiislam@gmail.com',017,'dtttrt','2023-09-02',NULL,get_thana_id('Barura'));
 INSERT INTO Buyer(delivery_address,nid,user_id) VALUES ('sdfsdf',NULL,(select max(user_id) from Users));
 INSERT INTO Seller(present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id) VALUES ('sadas','asas',456,546,'ggwp','hehe',(select max(user_id) from Users));
 INSERT INTO Admin(user_id) VALUES (select max(user_id) from Users);
+
+INSERT INTO Advertisements(description,status,type,quantity,seller_id) VALUES ('sdfsdf','unfinished','meat',5,(select user_id from Seller where phone_number = phone_number));
+INSERT INTO Meat_Advertisement(type,price_per_kg,date_of_storage,date_of_expiry,picture_url,advertise_id) VALUES ('cow',500,'2020-09-02','2020-09-02','url',(select max(advertise_id) from Advertisements));
