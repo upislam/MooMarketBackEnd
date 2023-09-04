@@ -57,6 +57,7 @@ router.post('/buyersubmit', async(req, res) => {
     }
     catch(e){
         res.render('output',{msg:'OTP has timed out'})
+        return
     }
 
     const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
@@ -171,6 +172,7 @@ router.post('/sellersubmit', async(req, res) => {
     }
     catch(e){
         res.render('output',{msg:'OTP has timed out'})
+        return
     }
     
     const salt = await bcrypt.genSalt(parseInt((process.env.SALT)));
