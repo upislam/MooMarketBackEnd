@@ -158,11 +158,12 @@ router.post('/buyersubmit', async(req, res) => {
     }); 
 
     const client = await pool.connect();
-    await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id,type) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6),\'buyer\')', [name, email, phone_number, password, birth_date, thana]);
+    var user_id;
+    user_id = await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id,type) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6),\'buyer\') returning user_id', [name, email, phone_number, password, birth_date, thana]);
     if(nid)
-        await client.query('INSERT INTO Buyer(delivery_address,nid,user_id) VALUES ($1,$2,(select max(user_id) from Users))', [delivery_address, nid]);
+        await client.query('INSERT INTO Buyer(delivery_address,nid,user_id) VALUES ($1,$2,$3)', [delivery_address, nid, user_id.rows[0].user_id]);
     else
-        await client.query('INSERT INTO Buyer(delivery_address,user_id) VALUES ($1,(select max(user_id) from Users))', [delivery_address]);
+        await client.query('INSERT INTO Buyer(delivery_address,user_id) VALUES ($1,$2)', [delivery_address,user_id.rows[0].user_id]);
     client.release(true)
     res.render('output',{msg:'Buyer Registration successful'}) 
 })
@@ -273,8 +274,9 @@ router.post('/sellersubmit', async(req, res) => {
     }); 
 
     const client = await pool.connect();
-    await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id,type) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6),\'seller\')', [name, email, phone_number, password, birth_date, thana]);
-    await client.query('INSERT INTO Seller(present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id) VALUES ($1,$2,$3,$4,$5,$6,(select max(user_id) from Users))',[present_address,permanent_address,nid,trade_license_no,company_name,short_description]);
+    var user_id
+    user_id = await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id,type) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6),\'seller\') returning user_id', [name, email, phone_number, password, birth_date, thana]);
+    await client.query('INSERT INTO Seller(present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id) VALUES ($1,$2,$3,$4,$5,$6,$7)',[present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id.rows[0].user_id]);
     client.release(true)
     res.render('output',{msg:'Seller Registration successful'}) 
 })
