@@ -52,6 +52,9 @@ app.use('/seller/myAdvertisements',myAdvertisementsRouter);
 const singleAdvertisementRouter = require('./Routes/singleAdvertisement');
 app.use('/singleAdvertisement',singleAdvertisementRouter);
 
+const coordinatesRouter = require('./Routes/coordinates');
+app.use('/coordinates',coordinatesRouter);
+
 app.listen(3000,(req, res) => {
     console.log('running port........');
 });

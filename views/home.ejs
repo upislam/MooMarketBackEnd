@@ -32,6 +32,7 @@
       <% if(typeof locals.session === 'undefined'){%>
         <a href="/login" class="button"><button class="btn btn-primary">Login</button></a>
         <a href="/register" class="button"><button class="btn btn-primary">Register</button></a>
+        <a href="/coordinates" class="button"><button class="btn btn-primary">Coordinates</button></a>
       <% }else{ %>
         <% if(locals.type=="seller"){ %>
           <a href="/seller/giveAdvertisement" class="button"><button class="btn btn-primary">Give Advertisement</button></a>

@@ -1,4 +1,4 @@
-var districts
+var districts=[]
 fetch('/register/districts', {
     method: 'GET'
 })
@@ -9,12 +9,16 @@ fetch('/register/districts', {
     return res.json();
 })
 .then(data => {
-    districts = data;
+    districts = [];
+    for(let i = 0; i < data.length; i++){
+        districts.push(data[i].name);
+    }
+    districts.sort()
     const parent = document.getElementById('district');
     for(let i = 0; i < districts.length; i++){
         let opt = document.createElement('option');
-        opt.value = districts[i].name;
-        opt.innerHTML = districts[i].name;
+        opt.value = districts[i];
+        opt.innerHTML = districts[i];
         parent.appendChild(opt);
     }
 })
