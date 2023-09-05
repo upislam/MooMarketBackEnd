@@ -4,6 +4,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer=require('nodemailer');
 
+const { Vonage } = require('@vonage/server-sdk')
+
+const vonage = new Vonage({
+  apiKey: "61b65c70",
+  apiSecret: "55JkOEfF1Arvuasi"
+})
+
 const { pool } = require("../db");
 
 const otpMap = new Map();
@@ -294,22 +301,29 @@ router.post('/otp',async(req,res)=> {
 
     otpMap.set(phone_number,otp_pin_token);
 
-    const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
-    const authToken = 'fc8f459529d9284605566d3efc720d7c';
-    const twilioClient = require('twilio')(accountSid, authToken);
+    // const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
+    // const authToken = 'fc8f459529d9284605566d3efc720d7c';
+    // const twilioClient = require('twilio')(accountSid, authToken);
+    
+    // twilioClient.messages
+    // .create({
+    //     body: `Your otp is ${otp_pin}`,
+    //     from: '+18134384603',
+    //     to: `+88${phone_number}`
+    // })
+    // .then(message => console.log("otp sent sucess"))
+    // .catch(err => {
+    //     console.log(err);
+    //     console.error("Error sending OTP:");
+    // });
 
-    
-    twilioClient.messages
-    .create({
-        body: `Your otp is ${otp_pin}`,
-        from: '+18134384603',
-        to: `+88${phone_number}`
-    })
-    .then(message => console.log("otp sent sucess"))
-    .catch(err => {
-        console.error("Error sending OTP:");
-    });
-    
+    const from = "Vonage APIs"
+    const to = `+88${phone_number}`
+    const text = `Your otp is ${otp_pin}`
+
+    await vonage.sms.send({to, from, text})
+        .then(resp => { console.log('Message sent successfully'); })
+        .catch(err => { console.error(err); });
 })
 
 module.exports = router;
