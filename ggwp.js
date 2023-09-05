@@ -17,21 +17,23 @@
 // console.log(ggwp)
 
 
-const jwt = require('jsonwebtoken');
-const nodemailer=require('nodemailer');
+// const jwt = require('jsonwebtoken');
+// const nodemailer=require('nodemailer');
 
-async function g(){
-    const emailToken = await jwt.sign({phone_number:44},'sfbshfjngkjnfbjesfkj56154jnfjndsf54454364kjfksnjdf',{expiresIn:'0h',})
+// async function g(){
+//     const emailToken = await jwt.sign({phone_number:44},'sfbshfjngkjnfbjesfkj56154jnfjndsf54454364kjfksnjdf',{expiresIn:'0h',})
     
-    try{
-        const gg = jwt.verify(emailToken,'sfbshfjngkjnfbjesfkj56154jnfjndsf54454364kjfksnjdf')
-    }
-    catch(e){
-        console.log('tt')
-    }
-}
+//     try{
+//         const gg = jwt.verify(emailToken,'sfbshfjngkjnfbjesfkj56154jnfjndsf54454364kjfksnjdf')
+//     }
+//     catch(e){
+//         console.log('tt')
+//     }
+// }
 
-g()
+// g()
+
+
 // var transporter = nodemailer.createTransport({
 //     service: 'gmail',
 //     host: 'smtp.gmail.com',
@@ -119,3 +121,13 @@ g()
 // }
 
 // f()
+
+async function reg(){
+    const bcrypt = require('bcrypt');
+
+    const salt = await bcrypt.genSalt(10);
+    password = await bcrypt.hash('pppppppp', salt);
+    console.log(password)
+}
+
+reg()
