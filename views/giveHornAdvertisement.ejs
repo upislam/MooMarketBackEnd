@@ -4,40 +4,23 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Meat Advertisement</title>
+    <title>Horn Advertisement</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   </head>
   <body>
 
     <div class="container">
-        <form class="col g-3" action="/seller/giveAdvertisement/meat" method="post" enctype="multipart/form-data">
-            <div class="col-auto">
-                <label for="Type" class="form-label">Type</label>
-                <select id="type" name="type" class="form-select" aria-label=".form-select"  required>
-                    <option value="Rib steak">Rib steak</option>
-                    <option value="Rib eye steak">Rib eye steak</option>
-                    <option value="Tri-Trip Roast">Tri-Trip Roast</option>
-                    <option value="T-bone steak">T-bone steak</option>
-                    <option value="Rump cap">Rump cap</option>
-                    <option value="Round cut">Round cut</option>
-                    <option value="Shank Meat">Shank Meat</option>
-                    <option value="Flank steak">Flank steak</option>
-                    <option value="Short plate primal">Short plate primal</option>
-                    <option value="Foreshank">Foreshank</option>
-                    <option value="Brisket cut">Brisket cut</option>
-                    <option value="Beef chuck">Beef chuck</option>
-                </select>
-            </div>
+        <form class="col g-3" action="/seller/giveAdvertisement/horn" method="post" enctype="multipart/form-data">
             <div class="col-auto">
                 <label for="Quantity" class="form-label">Quantity</label>
                 <input type="number" class="form-control" id="quantity" name="quantity" placeholder="quantity" oninput="quantityHandler()" required>
             </div>
             <label for="Quantity" class="form-label" id="quantity_error" style="color: red;"></label>
             <div class="col-auto">
-                <label for="Price per kg" class="form-label">Price per kg</label>
-                <input type="number" class="form-control" id="price_per_kg" name="price_per_kg" placeholder="Price per kg" oninput="pricePerKgHandler()" required>
+                <label for="Selling price per piece" class="form-label">Selling price per piece</label>
+                <input type="number" class="form-control" id="selling_price_per_piece" name="selling_price_per_piece" placeholder="Selling price per piece" oninput="sellingPricePerPieceHandler()" required>
             </div>
-            <label for="Price per kg" class="form-label" id="price_per_kg_error" style="color: red;"></label>
+            <label for="Selling price per piece" class="form-label" id="selling_price_per_piece_error" style="color: red;"></label>
             <div class="col-auto">
                 <label for="Date of storage" class="form-label">Date of storage</label>
                 <input type="date" class="form-control" id="date_of_storage" name="date_of_storage" placeholder="Date of storage" oninput="dateHandler()" required>
@@ -61,7 +44,7 @@
         </form>
     </div>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="/scripts/giveMeatAdvertisement.js"></script>
+    <script src="/scripts/giveHornAdvertisement.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   </body>
 </html>

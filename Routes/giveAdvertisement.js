@@ -148,4 +148,82 @@ router.post('/cattle', upload.fields([
     }
 })
 
+router.post('/rawhide',upload.single("picture"), async(req, res) => {
+    if(req.session.phone_number){
+        if(req.session.type=='seller'){
+            const location='./public/submittedPictures/'+req.file.filename;
+            const {quantity,preservation_style,selling_price_per_piece,date_of_storage,date_of_expiry,description,}=req.body;
+
+            const client = await pool.connect();
+            if(parseInt(quantity)*parseInt(selling_price_per_piece)>=100000){
+                await client.query('INSERT INTO Advertisements(description,status,type,verified,quantity,seller_id) VALUES ($1,\'unfinished\',\'rawhide\',false,$2,(select user_id from Users where phone_number = $3))',[description,quantity,req.session.phone_number]);
+            }
+            else{
+                await client.query('INSERT INTO Advertisements(description,status,type,quantity,seller_id) VALUES ($1,\'unfinished\',\'rawhide\',$2,(select user_id from Users where phone_number = $3))',[description,quantity,req.session.phone_number]);
+            }
+            await client.query('INSERT INTO Rawhide_Advertisement(preservation_style,selling_price_per_piece,date_of_storage,date_of_expiry,picture_url,advertise_id) VALUES ($1,$2,$3,$4,$5,(select max(advertise_id) from Advertisements))',[preservation_style,selling_price_per_piece,date_of_storage,date_of_expiry,location]);
+            client.release(true);
+            res.render('output',{msg:"Advertisement submitted successfully"})
+        }
+        else{
+            res.render('output',{msg:"You are not a seller"})
+        }
+    }
+    else{
+        res.redirect('/login');
+    }
+})
+
+router.post('/horn',upload.single("picture"), async(req, res) => {
+    if(req.session.phone_number){
+        if(req.session.type=='seller'){
+            const location='./public/submittedPictures/'+req.file.filename;
+            const {quantity,selling_price_per_piece,date_of_storage,date_of_expiry,description,}=req.body;
+
+            const client = await pool.connect();
+            if(parseInt(quantity)*parseInt(selling_price_per_piece)>=100000){
+                await client.query('INSERT INTO Advertisements(description,status,type,verified,quantity,seller_id) VALUES ($1,\'unfinished\',\'horn\',false,$2,(select user_id from Users where phone_number = $3))',[description,quantity,req.session.phone_number]);
+            }
+            else{
+                await client.query('INSERT INTO Advertisements(description,status,type,quantity,seller_id) VALUES ($1,\'unfinished\',\'horn\',$2,(select user_id from Users where phone_number = $3))',[description,quantity,req.session.phone_number]);
+            }
+            await client.query('INSERT INTO Horn_Advertisement(selling_price_per_piece,date_of_storage,date_of_expiry,picture_url,advertise_id) VALUES ($1,$2,$3,$4,(select max(advertise_id) from Advertisements))',[selling_price_per_piece,date_of_storage,date_of_expiry,location]);
+            client.release(true);
+            res.render('output',{msg:"Advertisement submitted successfully"})
+        }
+        else{
+            res.render('output',{msg:"You are not a seller"})
+        }
+    }
+    else{
+        res.redirect('/login');
+    }
+})
+
+router.post('/hoof',upload.single("picture"), async(req, res) => {
+    if(req.session.phone_number){
+        if(req.session.type=='seller'){
+            const location='./public/submittedPictures/'+req.file.filename;
+            const {quantity,selling_price_per_piece,date_of_storage,date_of_expiry,description,}=req.body;
+
+            const client = await pool.connect();
+            if(parseInt(quantity)*parseInt(selling_price_per_piece)>=100000){
+                await client.query('INSERT INTO Advertisements(description,status,type,verified,quantity,seller_id) VALUES ($1,\'unfinished\',\'hoof\',false,$2,(select user_id from Users where phone_number = $3))',[description,quantity,req.session.phone_number]);
+            }
+            else{
+                await client.query('INSERT INTO Advertisements(description,status,type,quantity,seller_id) VALUES ($1,\'unfinished\',\'hoof\',$2,(select user_id from Users where phone_number = $3))',[description,quantity,req.session.phone_number]);
+            }
+            await client.query('INSERT INTO Hoof_Advertisement(selling_price_per_piece,date_of_storage,date_of_expiry,picture_url,advertise_id) VALUES ($1,$2,$3,$4,(select max(advertise_id) from Advertisements))',[selling_price_per_piece,date_of_storage,date_of_expiry,location]);
+            client.release(true);
+            res.render('output',{msg:"Advertisement submitted successfully"})
+        }
+        else{
+            res.render('output',{msg:"You are not a seller"})
+        }
+    }
+    else{
+        res.redirect('/login');
+    }
+})
+
 module.exports = router;
