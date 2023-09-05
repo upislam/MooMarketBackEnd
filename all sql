@@ -136,6 +136,13 @@ CREATE TABLE Advertisement_Delete_History (
     admin_id integer REFERENCES Admin(user_id)
 );
 
+CREATE TABLE Coordinates(
+	thana_id integer REFERENCES Thana(thana_id),
+    lng NUMERIC(20, 10) NOT NULL,
+    lat NUMERIC(20, 10) NOT NULL
+);
+
+
 CREATE OR REPLACE FUNCTION get_thana_id(t_name varchar) RETURNS
 integer AS $$
 DECLARE

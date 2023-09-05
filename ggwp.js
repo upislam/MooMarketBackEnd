@@ -132,21 +132,39 @@
 
 // reg()
 
-const { Vonage } = require('@vonage/server-sdk')
+// const { Vonage } = require('@vonage/server-sdk')
 
-const vonage = new Vonage({
-  apiKey: "61b65c70",
-  apiSecret: "55JkOEfF1Arvuasi"
-})
+// const vonage = new Vonage({
+//   apiKey: "61b65c70",
+//   apiSecret: "55JkOEfF1Arvuasi"
+// })
 
-const from = "Vonage APIs"
-const to = "8801704953445"
-const text = 'A text message sent using the Vonage SMS API'
+// const from = "Vonage APIs"
+// const to = "8801704953445"
+// const text = 'A text message sent using the Vonage SMS API'
 
-async function sendSMS() {
-    await vonage.sms.send({to, from, text})
-        .then(resp => { console.log('Message sent successfully'); console.log(resp); })
-        .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
+// async function sendSMS() {
+//     await vonage.sms.send({to, from, text})
+//         .then(resp => { console.log('Message sent successfully'); console.log(resp); })
+//         .catch(err => { console.log('There was an error sending the messages.'); console.error(err); });
+// }
+
+// sendSMS();
+
+// Initialize an empty array to store the objects
+const coordinatesArray = [];
+
+// Define the number of objects you want in the array
+const numberOfObjects = 5; // You can change this to the desired number
+
+// Use a for loop to generate and push objects into the array
+for (let i = 0; i < numberOfObjects; i++) {
+    const lng = Math.random() * 360 - 180; // Generates a random longitude between -180 and 180
+    const lat = Math.random() * 180 - 90;  // Generates a random latitude between -90 and 90
+
+    const coordinates = { lng, lat };
+    coordinatesArray.push(coordinates);
 }
 
-sendSMS();
+// Print the resulting array
+console.log(coordinatesArray);
