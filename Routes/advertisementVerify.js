@@ -7,7 +7,7 @@ router.get('/', async(req, res) => {
     if(req.session.phone_number){
         if(req.session.type=="admin"){
             const client = await pool.connect();
-            const meatAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN meat_advertisement WHERE advertisements.verified=false");
+            const meatAdvertisements = await client.query("SELECT * FROM advertisements  JOIN meat_advertisement on advertisements.advertise_id=meat_advertisement.advertise_id WHERE advertisements.verified=false");
             const cattleAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN cattle_advertisement WHERE advertisements.verified=false");
             const rawhideAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN rawhide_advertisement WHERE advertisements.verified=false");
             const hornAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN horn_advertisement WHERE advertisements.verified=false");

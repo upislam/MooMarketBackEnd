@@ -6,7 +6,7 @@ const { pool } = require("../db");
 router.get('/', async(req, res) => {
     if(req.session.phone_number){
         const client = await pool.connect();
-        const meatAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN meat_advertisement");
+        const meatAdvertisements = await client.query("SELECT * FROM advertisements JOIN meat_advertisement on advertisements.advertise_id=meat_advertisement.advertise_id");
         const cattleAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN cattle_advertisement");
         const rawhideAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN rawhide_advertisement");
         const hornAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN horn_advertisement");
@@ -24,7 +24,7 @@ router.get('/category/:category', async(req, res) => {
         var meatAdvertisements,cattleAdvertisements,rawhideAdvertisements,hornAdvertisements,hoofAdvertisements;
         if(req.params.category=="meat"){
             const client = await pool.connect();
-            meatAdvertisements = await client.query("SELECT * FROM advertisements Natural JOIN meat_advertisement");
+            meatAdvertisements = await client.query("SELECT * FROM advertisements JOIN meat_advertisement on advertisements.advertise_id=meat_advertisement.advertise_id");
             client.release(true);
             res.render('homeByCategory',{session:req.session.phone_number,type:req.session.type,allAdvertisements:meatAdvertisements.rows}) 
         }
