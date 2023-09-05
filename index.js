@@ -43,6 +43,15 @@ app.use('/logout',logoutRouter);
 const giveAdvertismentRouter = require('./Routes/giveAdvertisement');
 app.use('/seller/giveAdvertisement',giveAdvertismentRouter);
 
+const advertisementVerifyRouter = require('./Routes/advertisementVerify');
+app.use('/admin/advertisementVerify',advertisementVerifyRouter);
+
+const myAdvertisementsRouter = require('./Routes/myAdvertisements');
+app.use('/seller/myAdvertisements',myAdvertisementsRouter);
+
+const singleAdvertisementRouter = require('./Routes/singleAdvertisement');
+app.use('/singleAdvertisement',singleAdvertisementRouter);
+
 app.listen(3000,(req, res) => {
     console.log('running port........');
 });
