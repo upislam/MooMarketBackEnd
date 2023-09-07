@@ -7,7 +7,7 @@ const app=express();
 const cors = require('cors')
 // Middleware for handling CORS
 app.use(cors({
-    origin:['http://127.0.0.1:5173',`${process.env.DOMAIN}`],
+    origin:['http://127.0.0.1:5173','http://localhost:5173',`${process.env.DOMAIN}`],
     credentials: true,
     headers:['X-Requested-With','content-type','Authorization'],
     methods:['GET','POST'],
