@@ -7,8 +7,8 @@ const nodemailer=require('nodemailer');
 const { Vonage } = require('@vonage/server-sdk')
 
 const vonage = new Vonage({
-  apiKey: "61b65c70",
-  apiSecret: "55JkOEfF1Arvuasi"
+  apiKey: "ffeeb2c5",
+  apiSecret: "U1PLibsE0bNCGMdM"
 })
 
 const { pool } = require("../db");
