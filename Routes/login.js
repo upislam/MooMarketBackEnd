@@ -42,7 +42,7 @@ router.post('/', async(req, res) => {
 
                 const accessToken = await jwt.sign({phone_number:phone_number,type:type.rows[0].type},process.env.JWT_SECRET,{expiresIn:'1h',})
 
-                res.cookie('accessToken',accessToken,{maxAge: 1*60*60*1000,httpOnly: true})
+                res.cookie('accessToken',accessToken,{maxAge: 1*60*60*1000,httpOnly: true,secure: true})
                 res.status(200).json({success: true,error: false,message: "Login successful",data: null});
                 return
             }
