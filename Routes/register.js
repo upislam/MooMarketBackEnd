@@ -12,20 +12,19 @@ const vonage = new Vonage({
 })
 
 const { pool } = require("../db");
+const { authenticate } = require("../authenticate");
 
 const otpMap = new Map();
+// async function f(){
+//     const otp_pin_token = await jwt.sign({ otp_pin: "12" }, process.env.JWT_SECRET, { expiresIn: '300s' });
+//     otpMap.set("13",otp_pin_token);
+//     console.log(otpMap.get("01711431964"))
+// }
 
-router.get('/', async(req, res) => {
-    res.render('buyerRegister') 
-})
-router.get('/seller', async(req, res) => {
-    res.render('sellerRegister') 
-})
-router.get('/buyer', async(req, res) => {
-    res.render('buyerRegister') 
-})
+// f()
 
 router.get('/districts', async(req, res) => {
+
     const client = await pool.connect();
     const r = await client.query('SELECT name FROM District');
     client.release(true);
@@ -51,19 +50,26 @@ function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min) ) + min;
 }
 
-
 router.post('/buyersubmit', async(req, res) => {
+
+    const auth = await authenticate(req.cookies.accessToken);
+    if(auth){
+        res.status(500).json({success: false,error: false,message: "Already logged in",data: null});
+        return
+    }
+
     var {name, email, password, phone_number, birth_date, thana, delivery_address,nid,otp} = req.body;
 
     try{
         const {otp_pin} = jwt.verify(otpMap.get(phone_number),process.env.JWT_SECRET)
         if(otp_pin != otp){
-            res.render('output',{msg:'OTP mismatch'})
+            res.status(500).json({success: false,error: false,message: "OTP mismatch",data: null});
             return;
         }
     }
     catch(e){
-        res.render('output',{msg:'OTP has timed out'})
+        console.error(e)
+        res.status(500).json({success: false,error: true,message: "OTP has timed out",data: null});
         return
     }
 
@@ -84,9 +90,8 @@ router.post('/buyersubmit', async(req, res) => {
     });
 
     const emailToken = await jwt.sign({phone_number:phone_number,},process.env.JWT_SECRET,{expiresIn:'1h',})
-    
-    //console.log(emailToken)
-    const url =`${process.env.DOMAIN}/register/verify/${emailToken}`;
+
+    const url =`${process.env.DOMAIN}/verify/${emailToken}`;
     transporter.sendMail({
         to: email,
         subject:'Confirm Email',
@@ -153,9 +158,9 @@ router.post('/buyersubmit', async(req, res) => {
         </html>`,
     }).catch(err =>{
         console.log(err)
-        res.render('output',{msg:`Email was wrong`})
+        res.status(500).json({success: false,error: true,message: "Email was wrong",data: null});
         return
-    }); 
+    });
 
     const client = await pool.connect();
     var user_id;
@@ -165,21 +170,28 @@ router.post('/buyersubmit', async(req, res) => {
     else
         await client.query('INSERT INTO Buyer(delivery_address,user_id) VALUES ($1,$2)', [delivery_address,user_id.rows[0].user_id]);
     client.release(true)
-    res.render('output',{msg:'Buyer Registration successful'}) 
+    res.status(200).json({success: true,error: false,message: "Buyer Registration successful",data: null});
 })
 
 router.post('/sellersubmit', async(req, res) => {
+
+    const auth = await authenticate(req.cookies.accessToken);
+    if(auth){
+        res.status(500).json({success: false,error: false,message: "Already logged in",data: null});
+        return
+    }
+
     var {name, email, password, phone_number, birth_date, thana,nid,trade_license_no,company_name,present_address,permanent_address,short_description,otp} = req.body;
     
     try{
         const {otp_pin} = jwt.verify(otpMap.get(phone_number),process.env.JWT_SECRET)
         if(otp_pin != otp){
-            res.render('output',{msg:'OTP mismatch'})
+            res.status(500).json({success: false,error: false,message: "OTP mismatch",data: null});
             return;
         }
     }
     catch(e){
-        res.render('output',{msg:'OTP has timed out'})
+        res.status(500).json({success: false,error: true,message: "OTP has timed out",data: null});
         return
     }
     
@@ -200,9 +212,8 @@ router.post('/sellersubmit', async(req, res) => {
     });
 
     const emailToken = await jwt.sign({phone_number:phone_number,},process.env.JWT_SECRET,{expiresIn:'1h',})
-    
-    //console.log(emailToken)
-    const url =`${process.env.DOMAIN}/register/verify/${emailToken}`;
+
+    const url =`${process.env.DOMAIN}/verify/${emailToken}`;
     transporter.sendMail({
         to: email,
         subject:'Confirm Email',
@@ -269,7 +280,7 @@ router.post('/sellersubmit', async(req, res) => {
         </html>`,
     }).catch(err =>{
         console.log(err)
-        res.render('output',{msg:`Email was wrong`})
+        res.status(500).json({success: false,error: true,message: "Email was wrong",data: null});
         return
     }); 
 
@@ -278,7 +289,7 @@ router.post('/sellersubmit', async(req, res) => {
     user_id = await client.query('INSERT INTO Users(name,email,phone_number,password,birth_date,updated_at,thana_id,type) VALUES ($1,$2,$3,$4,$5,NULL,get_thana_id($6),\'seller\') returning user_id', [name, email, phone_number, password, birth_date, thana]);
     await client.query('INSERT INTO Seller(present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id) VALUES ($1,$2,$3,$4,$5,$6,$7)',[present_address,permanent_address,nid,trade_license_no,company_name,short_description,user_id.rows[0].user_id]);
     client.release(true)
-    res.render('output',{msg:'Seller Registration successful'}) 
+    res.status(200).json({success: true,error: false,message: "Seller Registration successful",data: null});
 })
 
 router.get('/verify/:token',async(req,res)=> {
@@ -287,10 +298,10 @@ router.get('/verify/:token',async(req,res)=> {
         const client = await pool.connect();
         await client.query('UPDATE Users SET verified=true WHERE phone_number=$1',[phone_number]);
         client.release(true);
-        res.render('output',{msg:'Email verified successfully'})
+        res.status(200).json({success: true,error: false,message: "Email verified successfully",data: null});
     }
     catch(e){
-        res.render('output',{msg:'Token is invalid'})
+        res.status(500).json({success: false,error: true,message: "Token is invalid",data: null});
         return
     }
 })
@@ -303,25 +314,11 @@ router.post('/otp',async(req,res)=> {
 
     otpMap.set(phone_number,otp_pin_token);
 
-    // const accountSid = 'AC20ee2e410c6fab586f959fc640155a79';
-    // const authToken = 'fc8f459529d9284605566d3efc720d7c';
-    // const twilioClient = require('twilio')(accountSid, authToken);
-    
-    // twilioClient.messages
-    // .create({
-    //     body: `Your otp is ${otp_pin}`,
-    //     from: '+18134384603',
-    //     to: `+88${phone_number}`
-    // })
-    // .then(message => console.log("otp sent sucess"))
-    // .catch(err => {
-    //     console.log(err);
-    //     console.error("Error sending OTP:");
-    // });
-
     const from = "Vonage APIs"
     const to = `+88${phone_number}`
     const text = `Your otp is ${otp_pin}`
+
+    console.log(otp_pin)
 
     await vonage.sms.send({to, from, text})
         .then(resp => { console.log('Message sent successfully'); })

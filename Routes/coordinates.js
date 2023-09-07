@@ -3,10 +3,6 @@ const router = express.Router();
 
 const { pool } = require("../db");
 
-router.get('/', async(req, res) => {
-    res.render('coordinates')
-})
-
 router.post('/', async(req, res) => {
     const {thana} = req.body;
     const client = await pool.connect();

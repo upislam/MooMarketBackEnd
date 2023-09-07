@@ -125,26 +125,5 @@ function initMap() {
       center: { lat: 21.94429398, lng: 90.02845764 },
       zoom: 16,
     });
-
-    // var ggwp = [{ lng:90.02845764, lat:21.94429398},
-    //   { lng:90.02829742, lat:21.94432449},
-    //   { lng:90.02763367, lat:21.94636917},
-    //   { lng:90.02780914, lat:21.94658089},
-    //   { lng:90.02852631, lat:21.94725037},
-    //   { lng:90.02902985, lat:21.94766045},
-    //   { lng:90.02974701, lat:21.94832802},
-    //   { lng:90.02989197, lat:21.94846153},
-    //   { lng:90.03025055, lat:21.9485302},
-    //   { lng:90.03038788, lat:21.94833183},
-    //   { lng:90.03025055, lat:21.94792938}]
-    // var polygon = new google.maps.Polygon({
-    //   paths: ggwp,
-    //   strokeColor: "#FF0000",
-    //   strokeOpacity: 0.8,
-    //   strokeWeight: 2,
-    //   fillColor: "#FF0000",
-    //   fillOpacity: 0.35,
-    // });
-    // polygon.setMap(map);
   }
   initMap();

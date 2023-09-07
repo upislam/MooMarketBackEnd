@@ -11,7 +11,7 @@ router.get('/buyer/:id', async(req, res) => {
         advertisement = await client.query("SELECT * FROM advertisements JOIN meat_advertisement on advertisements.advertise_id=meat_advertisement.advertise_id WHERE advertise_id=$1", [req.params.id]);
     }
     else if(type.rows[0].type=="cattle"){
-        advertisement = await client.query("SELECT * FROM advertisements Natural JOIN cattle_advertisement WHERE advertise_id=$1", [req.params.id]);
+        advertisement = await client.query("SELECT * FROM advertisements Natural JOIN (cattle_advertisement JOIN cattle ON advertise_id=cattle_advertise_id) WHERE advertise_id=$1", [req.params.id]);
     }
     else if(type.rows[0].type=="rawhide"){
         advertisement = await client.query("SELECT * FROM advertisements Natural JOIN rawhide_advertisement WHERE advertise_id=$1", [req.params.id]);
@@ -34,7 +34,7 @@ router.get('/seller/:id', async(req, res) => {
         advertisement = await client.query("SELECT * FROM advertisements JOIN meat_advertisement on advertisements.advertise_id=meat_advertisement.advertise_id WHERE advertise_id=$1", [req.params.id]);
     }
     else if(type.rows[0].type=="cattle"){
-        advertisement = await client.query("SELECT * FROM advertisements Natural JOIN cattle_advertisement WHERE advertise_id=$1", [req.params.id]);
+        advertisement = await client.query("SELECT * FROM advertisements Natural JOIN (cattle_advertisement JOIN cattle ON advertise_id=cattle_advertise_id) WHERE advertise_id=$1", [req.params.id]);
     }
     else if(type.rows[0].type=="rawhide"){
         advertisement = await client.query("SELECT * FROM advertisements Natural JOIN rawhide_advertisement WHERE advertise_id=$1", [req.params.id]);
@@ -60,7 +60,7 @@ router.get('/admin/:id', async(req, res) => {
                 advertisement = await client.query("SELECT * FROM advertisements JOIN meat_advertisement on advertisements.advertise_id=meat_advertisement.advertise_id WHERE advertise_id=$1", [req.params.id]);
             }
             else if(type.rows[0].type=="cattle"){
-                advertisement = await client.query("SELECT * FROM advertisements Natural JOIN cattle_advertisement WHERE advertise_id=$1", [req.params.id]);
+                advertisement = await client.query("SELECT * FROM advertisements Natural JOIN (cattle_advertisement JOIN cattle ON advertise_id=cattle_advertise_id) WHERE advertise_id=$1", [req.params.id]);
             }
             else if(type.rows[0].type=="rawhide"){
                 advertisement = await client.query("SELECT * FROM advertisements Natural JOIN rawhide_advertisement WHERE advertise_id=$1", [req.params.id]);
