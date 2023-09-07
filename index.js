@@ -9,7 +9,7 @@ const cors = require('cors')
 app.use(cors({
     origin:['http://127.0.0.1:5173','http://localhost:5173',`${process.env.DOMAIN}`],
     credentials: true,
-    headers:['X-Requested-With','content-type','Authorization'],
+    headers:['X-Requested-With','content-type','Authorization','Access-Control-Allow-Headers','Origin'],
     methods:['GET','POST'],
 }));
 
